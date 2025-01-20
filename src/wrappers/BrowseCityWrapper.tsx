@@ -1,7 +1,39 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import CityCard from "../components/CityCard";
+import { useEffect, useState } from "react";
+import { City } from "../types/type";
+import axios from "axios";
+import Loading from "../components/Loading/Loading";
 
 export default function BrowseCityWrapper () {
+    const [cities, setCities] = useState<City[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        axios.get("http://127.0.0.1:8000/api/cities", {
+            headers: {
+                "X-API-KEY": "78e382he8h3eh889jq9j"
+            },
+        })
+        .then((response) => {
+            setCities(response.data.data)
+            setLoading(false);
+        })
+        .catch((error) => {
+            setError(error)
+            setLoading(false)
+        });
+    }, []);
+
+    if (loading) {
+        return <Loading/>
+    }
+
+    if (error) {
+        return <p>Error loading data: {error}</p>
+    }
+
     return (
         <>
             <section id="Cities" className="flex flex-col gap-[30px] mt-[100px]">
@@ -26,9 +58,11 @@ export default function BrowseCityWrapper () {
                     slidesOffsetAfter= {30}
                     slidesOffsetBefore= {30}
                 >
-                    <SwiperSlide className="!w-fit first-of-type:pl-[calc((100%-1130px-60px)/2)] last-of-type:pr-[calc((100%-1130px-60px)/2)]">
-                        <CityCard/>
+                    {cities.map((city) => (
+                    <SwiperSlide key={city.id} className="!w-fit first-of-type:pl-[calc((100%-1130px-60px)/2)] last-of-type:pr-[calc((100%-1130px-60px)/2)]">
+                        <CityCard city={city}/>
                     </SwiperSlide>
+                    ))}
                 </Swiper>
             </div>
             </div>
