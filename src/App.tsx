@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './App.css'
 import Browse from './pages/Browse'
 import CityDetails from './pages/CityDetails'
 import Details from './pages/Details'
